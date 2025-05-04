@@ -29,9 +29,16 @@ class _GoogleMapPageState extends State<GoogleMapPage>
     return Scaffold(
       appBar: AppBar(title: const Text('Google Map')),
       body: GoogleMap(
+        //    تحديد حدود الخريطة المسموح بها
+        cameraTargetBounds: CameraTargetBounds(
+          LatLngBounds(
+            northeast: const LatLng(30.63792201718762, 31.382469997852287),
+            southwest: const LatLng(30.633627342081983, 31.378395747273252),
+          ),
+        ),
         initialCameraPosition: CameraPosition(
           target: LatLng(37.42796133580664, -122.085749655962),
-          zoom: 14,
+          zoom: 20,
         ),
       ),
     );

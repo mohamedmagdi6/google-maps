@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps/pages/google_map_page.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() {
   runApp(const MyApp());
