@@ -12,11 +12,13 @@ class _GoogleMapPageState extends State<GoogleMapPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late GoogleMapController mapController;
+  Set<Marker> markers = {};
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
+    initMarker();
   }
 
   @override
@@ -33,6 +35,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
       body: Stack(
         children: [
           GoogleMap(
+            markers: markers,
             onMapCreated: (GoogleMapController controller) {
               mapController = controller;
             },
@@ -65,5 +68,18 @@ class _GoogleMapPageState extends State<GoogleMapPage>
         ],
       ),
     );
+  }
+
+  void initMarker() {
+    var firstMarker = Marker(
+      markerId: const MarkerId('1'),
+      position: const LatLng(30.63792201718762, 31.382469997852287),
+      infoWindow: const InfoWindow(title: 'First Marker'),
+      icon: BitmapDescriptor.defaultMarker,
+    );
+
+    setState(() {
+      markers.add(firstMarker);
+    });
   }
 }
