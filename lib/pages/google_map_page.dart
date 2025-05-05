@@ -11,6 +11,7 @@ class GoogleMapPage extends StatefulWidget {
 class _GoogleMapPageState extends State<GoogleMapPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  late GoogleMapController mapController;
 
   @override
   void initState() {
@@ -21,6 +22,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
   @override
   void dispose() {
     _controller.dispose();
+    mapController.dispose();
     super.dispose();
   }
 
@@ -28,18 +30,39 @@ class _GoogleMapPageState extends State<GoogleMapPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Google Map')),
-      body: GoogleMap(
-        //    تحديد حدود الخريطة المسموح بها
-        cameraTargetBounds: CameraTargetBounds(
-          LatLngBounds(
-            northeast: const LatLng(30.63792201718762, 31.382469997852287),
-            southwest: const LatLng(30.633627342081983, 31.378395747273252),
+      body: Stack(
+        children: [
+          GoogleMap(
+            onMapCreated: (GoogleMapController controller) {
+              mapController = controller;
+            },
+            cameraTargetBounds: CameraTargetBounds(
+              LatLngBounds(
+                northeast: const LatLng(30.63792201718762, 31.382469997852287),
+                southwest: const LatLng(30.633627342081983, 31.378395747273252),
+              ),
+            ),
+            initialCameraPosition: CameraPosition(
+              target: LatLng(37.42796133580664, -122.085749655962),
+              zoom: 14,
+            ),
           ),
-        ),
-        initialCameraPosition: CameraPosition(
-          target: LatLng(37.42796133580664, -122.085749655962),
-          zoom: 20,
-        ),
+          Positioned(
+            bottom: 20,
+            left: 20,
+            child: FloatingActionButton(
+              onPressed: () async {
+                // Move to current location (example coordinates used here)
+                mapController.animateCamera(
+                  CameraUpdate.newLatLng(
+                    LatLng(37.42796133580664, -122.085749655962),
+                  ),
+                );
+              },
+              child: const Icon(Icons.my_location),
+            ),
+          ),
+        ],
       ),
     );
   }
