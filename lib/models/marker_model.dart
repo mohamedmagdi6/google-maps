@@ -22,12 +22,6 @@ List<MarkerModel> markersModel = [
     position: const LatLng(30.594842775901547, 31.733810556358584),
   ),
   MarkerModel(
-    id: '2',
-    title: 'Initial Marker',
-    snippet: 'This is the second marker',
-    position: const LatLng(37.42796133580664, -122.085749655962),
-  ),
-  MarkerModel(
     id: '3',
     title: 'Nouran House',
     snippet: 'This is the third marker',

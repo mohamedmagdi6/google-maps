@@ -47,7 +47,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
             //   ),
             // ),
             initialCameraPosition: CameraPosition(
-              target: LatLng(37.42796133580664, -122.085749655962),
+              target: LatLng(30.594842775901547, 31.733810556358584),
               zoom: 14,
             ),
           ),
@@ -59,7 +59,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
                 // Move to current location (example coordinates used here)
                 mapController.animateCamera(
                   CameraUpdate.newLatLng(
-                    LatLng(30.638183411309782, 31.37968581530116),
+                    LatLng(30.594842775901547, 31.733810556358584),
                   ),
                 );
               },
