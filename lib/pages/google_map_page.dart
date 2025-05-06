@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps/models/marker_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class GoogleMapPage extends StatefulWidget {
@@ -12,7 +13,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late GoogleMapController mapController;
-  Set<Marker> markers = {};
+  Set<Marker> mapMarkers = {};
 
   @override
   void initState() {
@@ -35,16 +36,16 @@ class _GoogleMapPageState extends State<GoogleMapPage>
       body: Stack(
         children: [
           GoogleMap(
-            markers: markers,
+            markers: mapMarkers,
             onMapCreated: (GoogleMapController controller) {
               mapController = controller;
             },
-            cameraTargetBounds: CameraTargetBounds(
-              LatLngBounds(
-                northeast: const LatLng(30.63792201718762, 31.382469997852287),
-                southwest: const LatLng(30.633627342081983, 31.378395747273252),
-              ),
-            ),
+            // cameraTargetBounds: CameraTargetBounds(
+            //   LatLngBounds(
+            //     northeast: const LatLng(30.63792201718762, 31.382469997852287),
+            //     southwest: const LatLng(30.633627342081983, 31.378395747273252),
+            //   ),
+            // ),
             initialCameraPosition: CameraPosition(
               target: LatLng(37.42796133580664, -122.085749655962),
               zoom: 14,
@@ -58,7 +59,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
                 // Move to current location (example coordinates used here)
                 mapController.animateCamera(
                   CameraUpdate.newLatLng(
-                    LatLng(37.42796133580664, -122.085749655962),
+                    LatLng(30.638183411309782, 31.37968581530116),
                   ),
                 );
               },
@@ -71,15 +72,20 @@ class _GoogleMapPageState extends State<GoogleMapPage>
   }
 
   void initMarker() {
-    var firstMarker = Marker(
-      markerId: const MarkerId('1'),
-      position: const LatLng(30.63792201718762, 31.382469997852287),
-      infoWindow: const InfoWindow(title: 'First Marker'),
-      icon: BitmapDescriptor.defaultMarker,
-    );
+    Set<Marker> markers =
+        markersModel.map((marker) {
+          return Marker(
+            markerId: MarkerId(marker.id),
+            position: marker.position,
+            infoWindow: InfoWindow(
+              title: marker.title,
+              snippet: marker.snippet,
+            ),
+          );
+        }).toSet();
 
     setState(() {
-      markers.add(firstMarker);
+      mapMarkers = markers;
     });
   }
 }
