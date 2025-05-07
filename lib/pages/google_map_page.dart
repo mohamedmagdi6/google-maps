@@ -15,6 +15,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
   late GoogleMapController mapController;
   Set<Marker> mapMarkers = {};
   Set<Polyline> polylines = {};
+  Set<Polygon> polygons = {};
 
   @override
   void initState() {
@@ -22,6 +23,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
     _controller = AnimationController(vsync: this);
     initMarker();
     initPolyline();
+    initPoyGon();
   }
 
   @override
@@ -38,6 +40,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
       body: Stack(
         children: [
           GoogleMap(
+            polygons: polygons,
             polylines: polylines,
             markers: mapMarkers,
             onMapCreated: (GoogleMapController controller) {
@@ -50,8 +53,9 @@ class _GoogleMapPageState extends State<GoogleMapPage>
             //   ),
             // ),
             initialCameraPosition: CameraPosition(
-              target: LatLng(30.594842775901547, 31.733810556358584),
-              zoom: 14,
+              target: const LatLng(30.576681472168644, 31.503726980819803),
+
+              zoom: 12,
             ),
           ),
           Positioned(
@@ -102,10 +106,29 @@ class _GoogleMapPageState extends State<GoogleMapPage>
         const LatLng(30.638183411309782, 31.37968581530116),
       ],
       color: Colors.red,
+      width: 2,
     );
 
     setState(() {
       polylines.add(polyline);
+    });
+  }
+
+  void initPoyGon() {
+    Polygon polygon = Polygon(
+      polygonId: const PolygonId('1'),
+      points: [
+        const LatLng(30.594842775901547, 31.733810556358584),
+        const LatLng(30.638183411309782, 31.37968581530116),
+        const LatLng(30.576681472168644, 31.503726980819803),
+      ],
+      fillColor: Colors.red.withAlpha(50),
+      strokeColor: Colors.red,
+      strokeWidth: 1,
+    );
+
+    setState(() {
+      polygons.add(polygon);
     });
   }
 }
