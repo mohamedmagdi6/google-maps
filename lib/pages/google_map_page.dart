@@ -116,6 +116,8 @@ class _GoogleMapPageState extends State<GoogleMapPage>
 
   void initPoyGon() {
     Polygon polygon = Polygon(
+      holes:
+          [], // ال holes دى بتبقى عباره عن  list<list<latLng>>    ## clall holyPolygon ##
       polygonId: const PolygonId('1'),
       points: [
         const LatLng(30.594842775901547, 31.733810556358584),
