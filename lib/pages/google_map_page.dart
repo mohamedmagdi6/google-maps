@@ -14,12 +14,14 @@ class _GoogleMapPageState extends State<GoogleMapPage>
   late AnimationController _controller;
   late GoogleMapController mapController;
   Set<Marker> mapMarkers = {};
+  Set<Polyline> polylines = {};
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
     initMarker();
+    initPolyline();
   }
 
   @override
@@ -36,6 +38,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
       body: Stack(
         children: [
           GoogleMap(
+            polylines: polylines,
             markers: mapMarkers,
             onMapCreated: (GoogleMapController controller) {
               mapController = controller;
@@ -86,6 +89,23 @@ class _GoogleMapPageState extends State<GoogleMapPage>
 
     setState(() {
       mapMarkers = markers;
+    });
+  }
+
+  void initPolyline() {
+    Polyline polyline = Polyline(
+      startCap: Cap.roundCap,
+      endCap: Cap.roundCap,
+      polylineId: const PolylineId('1'),
+      points: [
+        const LatLng(30.594842775901547, 31.733810556358584),
+        const LatLng(30.638183411309782, 31.37968581530116),
+      ],
+      color: Colors.red,
+    );
+
+    setState(() {
+      polylines.add(polyline);
     });
   }
 }
