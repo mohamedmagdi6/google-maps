@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps/models/marker_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 class GoogleMapPage extends StatefulWidget {
   const GoogleMapPage({super.key});
@@ -16,11 +19,13 @@ class _GoogleMapPageState extends State<GoogleMapPage>
   Set<Marker> mapMarkers = {};
   Set<Polyline> polylines = {};
   Set<Polygon> polygons = {};
+  late Location location;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
+    location = Location();
     initMarker();
     initPolyline();
     initPoyGon();
@@ -131,6 +136,43 @@ class _GoogleMapPageState extends State<GoogleMapPage>
 
     setState(() {
       polygons.add(polygon);
+    });
+  }
+
+  void initializeLocationServices() async {
+    bool isServiceEnabled = await isLocationServiceEnabled();
+    if (isServiceEnabled) {
+      bool hasPermission = await requestLocationPermission();
+      if (hasPermission) {
+        getLocationDatat();
+      }
+    }
+  }
+
+  Future<bool> isLocationServiceEnabled() async {
+    bool isServiceEnabled = await location.serviceEnabled();
+    if (!isServiceEnabled) {
+      isServiceEnabled = await location.requestService();
+    }
+    return isServiceEnabled;
+  }
+
+  Future<bool> requestLocationPermission() async {
+    PermissionStatus permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+    } else if (permissionGranted == PermissionStatus.deniedForever) {
+      // Handle the case where permission is denied forever
+      // You can show a dialog or redirect the user to app settings
+      return false;
+    }
+    return permissionGranted == PermissionStatus.granted;
+  }
+
+  void getLocationDatat() {
+    location.onLocationChanged.listen((locationData) {
+      log(locationData.latitude.toString());
+      log(locationData.longitude.toString());
     });
   }
 }
