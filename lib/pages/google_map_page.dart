@@ -168,6 +168,9 @@ class _GoogleMapPageState extends State<GoogleMapPage>
   }
 
   void getLocationDatat() {
+    location.changeSettings(
+      distanceFilter: 1,
+    ); // distanceFilter: makes the location update every 1 meter
     location.onLocationChanged.listen((locationData) {
       mapController?.animateCamera(
         CameraUpdate.newLatLng(
