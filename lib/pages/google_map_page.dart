@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps/models/marker_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -15,7 +13,7 @@ class GoogleMapPage extends StatefulWidget {
 class _GoogleMapPageState extends State<GoogleMapPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late GoogleMapController mapController;
+  GoogleMapController? mapController;
   Set<Marker> mapMarkers = {};
   Set<Polyline> polylines = {};
   Set<Polygon> polygons = {};
@@ -26,6 +24,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
     super.initState();
     _controller = AnimationController(vsync: this);
     location = Location();
+    initializeLocationServices();
     initMarker();
     initPolyline();
     initPoyGon();
@@ -34,7 +33,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
   @override
   void dispose() {
     _controller.dispose();
-    mapController.dispose();
+    mapController!.dispose();
     super.dispose();
   }
 
@@ -69,7 +68,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
             child: FloatingActionButton(
               onPressed: () async {
                 // Move to current location (example coordinates used here)
-                mapController.animateCamera(
+                mapController!.animateCamera(
                   CameraUpdate.newLatLng(
                     LatLng(30.594842775901547, 31.733810556358584),
                   ),
@@ -163,7 +162,6 @@ class _GoogleMapPageState extends State<GoogleMapPage>
       permissionGranted = await location.requestPermission();
     } else if (permissionGranted == PermissionStatus.deniedForever) {
       // Handle the case where permission is denied forever
-      // You can show a dialog or redirect the user to app settings
       return false;
     }
     return permissionGranted == PermissionStatus.granted;
@@ -171,8 +169,19 @@ class _GoogleMapPageState extends State<GoogleMapPage>
 
   void getLocationDatat() {
     location.onLocationChanged.listen((locationData) {
-      log(locationData.latitude.toString());
-      log(locationData.longitude.toString());
+      mapController?.animateCamera(
+        CameraUpdate.newLatLng(
+          LatLng(locationData.latitude!, locationData.longitude!),
+        ),
+      );
+      mapMarkers.add(
+        Marker(
+          markerId: const MarkerId('currentLocation'),
+          position: LatLng(locationData.latitude!, locationData.longitude!),
+          infoWindow: const InfoWindow(title: 'Current Location'),
+        ),
+      );
+      setState(() {});
     });
   }
 }
