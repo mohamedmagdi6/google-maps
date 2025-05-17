@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps/models/marker_model.dart';
+import 'package:google_maps/utils/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
@@ -14,6 +15,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   GoogleMapController? mapController;
+  late LocationService locationService;
   Set<Marker> mapMarkers = {};
   Set<Polyline> polylines = {};
   Set<Polygon> polygons = {};
@@ -24,6 +26,7 @@ class _GoogleMapPageState extends State<GoogleMapPage>
     super.initState();
     _controller = AnimationController(vsync: this);
     location = Location();
+    locationService = LocationService();
     initializeLocationServices();
     initMarker();
     initPolyline();
@@ -139,52 +142,26 @@ class _GoogleMapPageState extends State<GoogleMapPage>
   }
 
   void initializeLocationServices() async {
-    bool isServiceEnabled = await isLocationServiceEnabled();
+    bool isServiceEnabled = await locationService.isLocationServiceEnabled();
     if (isServiceEnabled) {
-      bool hasPermission = await requestLocationPermission();
+      bool hasPermission = await locationService.requestLocationPermission();
       if (hasPermission) {
-        getLocationDatat();
+        locationService.getRealTimeLocation((locationData) {
+          mapController?.animateCamera(
+            CameraUpdate.newLatLng(
+              LatLng(locationData.latitude!, locationData.longitude!),
+            ),
+          );
+          mapMarkers.add(
+            Marker(
+              markerId: const MarkerId('currentLocation'),
+              position: LatLng(locationData.latitude!, locationData.longitude!),
+              infoWindow: const InfoWindow(title: 'Current Location'),
+            ),
+          );
+          setState(() {});
+        });
       }
     }
-  }
-
-  Future<bool> isLocationServiceEnabled() async {
-    bool isServiceEnabled = await location.serviceEnabled();
-    if (!isServiceEnabled) {
-      isServiceEnabled = await location.requestService();
-    }
-    return isServiceEnabled;
-  }
-
-  Future<bool> requestLocationPermission() async {
-    PermissionStatus permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-    } else if (permissionGranted == PermissionStatus.deniedForever) {
-      // Handle the case where permission is denied forever
-      return false;
-    }
-    return permissionGranted == PermissionStatus.granted;
-  }
-
-  void getLocationDatat() {
-    location.changeSettings(
-      distanceFilter: 1,
-    ); // distanceFilter: makes the location update every 1 meter
-    location.onLocationChanged.listen((locationData) {
-      mapController?.animateCamera(
-        CameraUpdate.newLatLng(
-          LatLng(locationData.latitude!, locationData.longitude!),
-        ),
-      );
-      mapMarkers.add(
-        Marker(
-          markerId: const MarkerId('currentLocation'),
-          position: LatLng(locationData.latitude!, locationData.longitude!),
-          infoWindow: const InfoWindow(title: 'Current Location'),
-        ),
-      );
-      setState(() {});
-    });
   }
 }
