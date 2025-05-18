@@ -26,11 +26,17 @@ class LocationService {
   }
 
   // get real time location function
-  void getRealTimeLocation(void Function(LocationData)? onData) {
-    location.changeSettings(
-      distanceFilter: 1,
-    ); // distanceFilter: makes the location update every 1 meter
-    location.onLocationChanged.listen(onData);
+  void getRealTimeLocation(void Function(LocationData)? onData) async {
+    bool islocationServiceEnabled = await isLocationServiceEnabled();
+    if (islocationServiceEnabled) {
+      bool hasPermission = await requestLocationPermission();
+      if (hasPermission) {
+        location.changeSettings(
+          distanceFilter: 1,
+        ); // distanceFilter: makes the location update every 1 meter
+        location.onLocationChanged.listen(onData);
+      }
+    }
   }
 
   // get current location function

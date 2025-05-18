@@ -142,26 +142,20 @@ class _GoogleMapPageState extends State<GoogleMapPage>
   }
 
   void initializeLocationServices() async {
-    bool isServiceEnabled = await locationService.isLocationServiceEnabled();
-    if (isServiceEnabled) {
-      bool hasPermission = await locationService.requestLocationPermission();
-      if (hasPermission) {
-        locationService.getRealTimeLocation((locationData) {
-          mapController?.animateCamera(
-            CameraUpdate.newLatLng(
-              LatLng(locationData.latitude!, locationData.longitude!),
-            ),
-          );
-          mapMarkers.add(
-            Marker(
-              markerId: const MarkerId('currentLocation'),
-              position: LatLng(locationData.latitude!, locationData.longitude!),
-              infoWindow: const InfoWindow(title: 'Current Location'),
-            ),
-          );
-          setState(() {});
-        });
-      }
-    }
+    locationService.getRealTimeLocation((locationData) {
+      mapController?.animateCamera(
+        CameraUpdate.newLatLng(
+          LatLng(locationData.latitude!, locationData.longitude!),
+        ),
+      );
+      mapMarkers.add(
+        Marker(
+          markerId: const MarkerId('currentLocation'),
+          position: LatLng(locationData.latitude!, locationData.longitude!),
+          infoWindow: const InfoWindow(title: 'Current Location'),
+        ),
+      );
+      setState(() {});
+    });
   }
 }
