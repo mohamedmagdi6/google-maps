@@ -32,4 +32,8 @@ class LocationService {
     ); // distanceFilter: makes the location update every 1 meter
     location.onLocationChanged.listen(onData);
   }
+
+  // get current location function
+  Future<LocationData?> getCurrentLocation() async =>
+      await location.getLocation();
 }

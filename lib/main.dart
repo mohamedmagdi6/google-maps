@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps/pages/google_map_page.dart';
+import 'package:google_maps/pages/route_tracker_page.dart';
 
 void main() {
   runApp(const RouteTrackerApp());
@@ -32,7 +32,7 @@ class RouteTrackerApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const GoogleMapPage(),
+      home: const RouteTrackerPage(),
     );
   }
 }
