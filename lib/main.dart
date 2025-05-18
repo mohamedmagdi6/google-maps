@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_maps/pages/google_map_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const RouteTrackerApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class RouteTrackerApp extends StatelessWidget {
+  const RouteTrackerApp({super.key});
 
   // This widget is the root of your application.
   @override
