@@ -1,6 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:google_maps/models/auto_complete_data_model.dart';
+import 'package:google_maps/utils/fetch_auto_complete_data.dart';
 import 'package:google_maps/utils/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -16,18 +16,32 @@ class _RouteTrackerPageState extends State<RouteTrackerPage> {
   late LocationService locationService;
   late GoogleMapController mapController;
   late TextEditingController searchController;
+  List<Predictions> autoCompletePlaces = [];
+  late FetchAutoCompleteData fetchAutoCompleteData;
 
   @override
   void initState() {
     initialCameraPosition = CameraPosition(target: LatLng(0, 0), zoom: 12);
     locationService = LocationService();
     searchController = TextEditingController();
-    searchController.addListener(() {
-      // Handle search input changes if needed
-      log('Search input: ${searchController.text}');
-    });
+    fetchAutoCompleteData = FetchAutoCompleteData();
+    fetchAutoCompletePlaces();
 
     super.initState();
+  }
+
+  void fetchAutoCompletePlaces() async {
+    searchController.addListener(() {
+      // Handle search input changes if needed
+      String input = searchController.text;
+      fetchAutoCompleteData.getAutoCompleteData(input).then((value) {
+        setState(() {
+          autoCompletePlaces.addAll(
+            value,
+          ); // Update autoCompletePlaces with new values
+        });
+      });
+    });
   }
 
   @override
