@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps/models/auto_complete_data_model.dart';
 import 'package:google_maps/utils/places_services.dart';
@@ -129,8 +131,10 @@ class _RouteTrackerPageState extends State<RouteTrackerPage> {
       );
     } on LocationPermissionException catch (e) {
       /// Handle the case where permission is denied
+      log(e.toString());
     } on LocationServiceException catch (e) {
       /// Handle the case where location service is disabled
+      log(e.toString());
     } catch (e) {
       /// Handle other exceptions
     }
