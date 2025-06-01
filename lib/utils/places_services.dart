@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:google_maps/models/auto_complete_data_model.dart';
 
-class FetchAutoCompleteData {
+class PlacesServices {
   final dio = Dio();
   final String apiKey = 'AIzaSyAPUkKJnctlmWtswO9epB-4KfbNgNyJy0s';
   final String baseUrl =

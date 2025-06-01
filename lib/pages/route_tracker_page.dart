@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps/models/auto_complete_data_model.dart';
-import 'package:google_maps/utils/fetch_auto_complete_data.dart';
+import 'package:google_maps/utils/places_services.dart';
 import 'package:google_maps/utils/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -17,28 +17,31 @@ class _RouteTrackerPageState extends State<RouteTrackerPage> {
   late GoogleMapController mapController;
   late TextEditingController searchController;
   List<Predictions> autoCompletePlaces = [];
-  late FetchAutoCompleteData fetchAutoCompleteData;
+  late PlacesServices placesServices;
 
   @override
   void initState() {
     initialCameraPosition = CameraPosition(target: LatLng(0, 0), zoom: 12);
     locationService = LocationService();
     searchController = TextEditingController();
-    fetchAutoCompleteData = FetchAutoCompleteData();
+    placesServices = PlacesServices();
     fetchAutoCompletePlaces();
 
     super.initState();
   }
 
-  void fetchAutoCompletePlaces() async {
+  void fetchAutoCompletePlaces() {
     searchController.addListener(() {
-      // Handle search input changes if needed
       String input = searchController.text;
-      fetchAutoCompleteData.getAutoCompleteData(input).then((value) {
+      if (input.isEmpty) {
         setState(() {
-          autoCompletePlaces.addAll(
-            value,
-          ); // Update autoCompletePlaces with new values
+          autoCompletePlaces.clear();
+        });
+        return;
+      }
+      placesServices.getAutoCompleteData(input).then((value) {
+        setState(() {
+          autoCompletePlaces = value;
         });
       });
     });
@@ -62,17 +65,53 @@ class _RouteTrackerPageState extends State<RouteTrackerPage> {
           child: Material(
             elevation: 4,
             borderRadius: BorderRadius.circular(8),
-            child: TextField(
-              controller: searchController,
-              decoration: InputDecoration(
-                hintText: 'Search here',
-                prefixIcon: Icon(Icons.search),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: 14,
-                  horizontal: 16,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search here',
+                    prefixIcon: Icon(Icons.search),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 14,
+                      horizontal: 16,
+                    ),
+                  ),
                 ),
-              ),
+                if (autoCompletePlaces.isNotEmpty)
+                  Container(
+                    constraints: BoxConstraints(maxHeight: 300),
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: autoCompletePlaces.length,
+                      separatorBuilder:
+                          (context, index) =>
+                              Divider(height: 1, color: Colors.grey[300]),
+                      itemBuilder: (context, index) {
+                        final place = autoCompletePlaces[index];
+                        return ListTile(
+                          leading: Icon(
+                            Icons.location_on,
+                            color: Colors.blueAccent,
+                          ),
+                          title: Text(
+                            place.description ?? 'No description',
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          subtitle: Text(
+                            'structuredFormatting?.secondaryText',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                          onTap: () {
+                            // Handle place selection
+                          },
+                        );
+                      },
+                    ),
+                  ),
+              ],
             ),
           ),
         ),
